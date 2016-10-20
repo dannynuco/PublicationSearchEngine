@@ -1,4 +1,4 @@
-  class CommentEngine extends React.Component {
+  class PSEngine extends React.Component {
     constructor () {
     super();
         this.state = {
@@ -55,7 +55,7 @@
 
         return (
             <div>
-            <CommentBox onCommentBoxChange={this.onCommentBoxChange.bind(this)}/>
+            <SearchBox onSearchBoxChange={this.onSearchBoxChange.bind(this)}/>
             <br/><br/>
             <div className="buttonRow"><button id="searchButton" className="button1" onClick={this.ondoSearch.bind(this)}>Search by gene</button><div className="divider"/><button id="favListButton" className="button1" onClick={this.onShowFavourites.bind(this)}>My favourites</button></div>
             <div id="technique-barchart" style={hideStyle}>
@@ -64,9 +64,9 @@
                 <div id="technique-barchart-title">Technique Distribution in Search Result</div>
             </div>
             <br/><br/><br/>
-            <CommentContainer doSearch={this.ondoSearch.bind(this)}>
+            <SearchContainer doSearch={this.ondoSearch.bind(this)}>
                 {children}
-            </CommentContainer>
+            </SearchContainer>
             </div>
         );
     }
@@ -137,7 +137,7 @@
           }
       }
 
-    onCommentBoxChange (value) {
+    onSearchBoxChange (value) {
         this.setState({
             searchQuery:value
         });
@@ -158,14 +158,14 @@
       }
 
 }
-class CommentBox extends React.Component {
+class SearchBox extends React.Component {
   constructor(props) {
     super(props);
     this.handleChange = this.handleChange.bind(this);
   }
 
   handleChange(event) {
-    this.props.onCommentBoxChange(event.target.value);
+    this.props.onSearchBoxChange(event.target.value);
   }
 
   render() {
@@ -174,9 +174,9 @@ class CommentBox extends React.Component {
     );
   }
 }
-class CommentContainer extends React.Component {
+class SearchContainer extends React.Component {
     render () {
-        return <div className="addComment">
+        return <div className="searchResultDiv">
             <div id="children-pane">
               {this.props.children}
             </div>
@@ -259,7 +259,7 @@ class ResultEntry extends React.Component {
 
 ReactDOM.render(
   <div>
-  <CommentEngine/>
+  <PSEngine/>
   </div>,
   document.getElementById('container')
 );
