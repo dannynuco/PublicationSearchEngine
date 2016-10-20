@@ -1,0 +1,263 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Publication Search Engine</title>
+    <script src="https://unpkg.com/react@15.3.2/dist/react.min.js"></script>
+    <script src="https://unpkg.com/react-dom@15.3.2/dist/react-dom.min.js"></script>
+    <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
+    <script src="https://unpkg.com/jquery@3.1.0/dist/jquery.min.js"></script>
+    <script src="https://unpkg.com/remarkable@1.7.1/dist/remarkable.min.js"></script>
+    <script src="https://unpkg.com/react-router/umd/ReactRouter.min.js"></script>
+    <style>
+        body {
+            text-align: center;
+            font-family: sans-serif;
+            background-color: #3897CE;
+        }
+        input {
+            font-size:20px;
+            color: white;
+            background-color: #3897CE;
+            text-align: center;
+            border:5px solid white;
+            border-radius: 4px;
+            outline:none;
+            width:600px;
+            min-height:15px;
+            padding:5px;
+        }
+        .button1 {
+            font-size:20px;
+            color: white;
+            background-color: deepskyblue;
+            text-align: center;
+            border:0px;
+            border-radius: 4px;
+            outline:none;
+            min-height:15px;
+            padding:5px;
+        }
+
+        img {
+            user-select: none;
+            -moz-user-select: none;
+            -khtml-user-select: none;
+            -webkit-user-select: none;
+            -o-user-select: none;
+        }
+        .listelement {
+            text-align:left;
+            margin: 6px;
+            width: 450px;
+            border:1px solid darkorange;
+            border-radius: 4px;
+            padding:5px;
+        }
+        .ResultEntry {
+            font-size:16px;
+            border-radius: 5px;
+            color: white;
+            background-color: deepskyblue;
+            display:inline-block;
+            vertical-align:top;
+            white-space: nowrap;
+            text-align:left;
+            margin:5px;
+            padding:5px;
+            width: 250px;
+            min-height:300px;
+            max-height:300px;
+            border:0px;
+            overflow: hidden;
+            text-overflow:ellipsis;
+        }
+        .ResultEntryDetailed {
+            font-size:16px;
+            border-radius: 5px;
+            color: black;
+            background-color: lightgreen;
+            display:inline-block;
+            vertical-align:top;
+            white-space: nowrap;
+            text-align:left;
+            margin:5px;
+            padding:5px;
+            border:0px;
+        }
+
+        .likeEntry {
+            color:white;
+            float:right;
+            border:1px solid white;
+            background-color: deepskyblue;
+            width:30px;
+            border-radius:4px;
+        }
+
+        .likedEntry {
+            color:blueviolet;
+            float:right;
+            border:1px solid white;
+            background-color: deepskyblue;
+            width:30px;
+            border-radius:4px;
+        }
+
+        .ResultEntry img {
+            text-align: center;
+            padding-top:25px;
+            padding-left:25px;
+            width: 200px;
+            height: 200px;
+        }
+        .ResultEntryDetailed img {
+            text-align: center;
+            padding-top:25px;
+            padding-left:25px;
+            width: 200px;
+            height: 200px;
+        }
+
+        .axis--x path {
+            display: none;
+        }
+        .tick line {
+            display: none;
+        }
+        .tick text {
+            font-size:16px;
+            fill:white;
+        }
+        .divider{
+            width:30px;
+            height:auto;
+            display:inline-block;
+        }
+        .buttonRow{
+            overflow: hidden;
+            white-space: nowrap;
+        }
+        #children-pane{
+            text-align: left;
+        }
+
+        .figure-detail {
+            text-align: center;
+            margin:5px;
+            padding:5px;
+            border:1px solid white;
+            border-radius: 5px;
+            display:inline-block;
+        }
+
+        #technique-barchart-title{
+            font-size:20px;
+            color:white;
+        }
+
+    </style>
+</head>
+<body>
+<br/>
+<br/>
+<br/>
+<br/>
+<img src="logo.PNG"/>
+<br/>
+<br/>
+<br/>
+<br/>
+<div id="container">
+</div>
+</body>
+<script src="http://d3js.org/d3.v4.0.0-alpha.45.min.js"></script>
+<script type="text/babel" src="commentengine-react.js"></script>
+<script>
+
+//variables for tracking chart state
+var chartDrawn=false;
+var svg;
+var graph;
+
+function drawChart(newData){
+    if(chartDrawn){
+        svg.selectAll('*').remove();
+    }
+    svg = d3.select("svg"),
+            margin = {top: 20, right: 20, bottom: 30, left: 40},
+            width = +svg.attr("width") - margin.left - margin.right,
+            height = +svg.attr("height") - margin.top - margin.bottom;
+
+    var x = d3.scaleBand().rangeRound([0, width]).padding(0),
+            y = d3.scaleLinear().rangeRound([0, height]);
+
+    g = svg.append("g")
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+        //Need to convert object to array for d3 use
+        var data=[];
+        var counter=0;
+        for(var i in newData){
+            data.push({
+                "order":counter,
+                "letter":i,
+                "frequency":newData[i]
+            });
+            counter++;
+        }
+
+        x.domain(data.map(function(d) { return d.letter; }));
+        y.domain([0, d3.max(data, function(d) { return d.frequency; })]);
+
+        g.append("g")
+                .attr("class", "axis axis--x")
+                .attr("transform", "translate(0," + height + ")")
+                .call(d3.axisBottom(x));
+
+        var bar = g.selectAll(".bar")
+                .data(data)
+                .enter().append("g")
+                .attr("class", "bar")
+
+        bar.append("rect")
+                .attr("class", "bar")
+                .attr("x", function(d) { return x(d.letter); })
+                .attr("y", function(d) { return height; })
+                .attr("width", x.bandwidth())
+                .attr("fill", function(d){ return d.order%2==0?"deepskyblue":"lightgreen" })
+                .transition()
+                .duration(300)
+                .delay(function (d, i) {
+                    return i * 150;
+                })
+                .attr("y", function (d, i) {
+                    return height - y(d.frequency);
+                })
+                .attr("height", function (d, i) {
+                    return y(d.frequency);
+                })
+
+
+        bar.append("text")
+                .attr("dy", ".75em")
+                .style('fill', 'white')
+                .style('font-size', "18px")
+                .attr("y", function(d) {
+                    return Math.min(height-20, height-y(d.frequency)+10);
+                })
+                .attr("x", function(d, i) {
+                    return (i+0.5) * (width / data.length);
+                })
+                .attr("text-anchor", "middle")
+                .text(function(d) { return d.frequency; });
+
+        chartDrawn=true
+        graph = graph || document.getElementById("technique-barchart");
+        graph.style.display="inline";
+}
+
+
+</script>
+</html>
