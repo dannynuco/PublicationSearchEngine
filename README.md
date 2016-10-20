@@ -16,5 +16,5 @@
 * [jQuery](https://github.com/jquery/jquery) fires ajax search requests to fetch data from server.
 * [d3.js](https://github.com/d3/d3) draws webpage graphical statistics.
 * [Node.js](https://github.com/nodejs/node) backend that handles search requests.
-* [node-csv](https://github.com/wdavidw/node-csv) parses backend csv data
+* [node-csv](https://github.com/wdavidw/node-csv) parses backend csv data.
 * [http-server](https://github.com/indexzero/http-server) hosts webpage.
