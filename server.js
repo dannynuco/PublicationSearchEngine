@@ -2,7 +2,7 @@
  * Created by Danny on 10/18/2016.
  */
 
-var PORT_NUM = 8000;
+var PORT_NUM = process.env.PORT||8000;
 var http = require('http');
 var url = require('url');
 var qs = require('querystring');
