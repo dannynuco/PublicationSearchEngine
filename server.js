@@ -56,7 +56,7 @@ var server = http.createServer(function(request, response){
     console.log(request.method);
     switch(request.method) {
         case 'GET':
-            response.end();
+            response.end("PSEngine search backend. Accepting POST requests");
             break;
         case 'POST':
             //Search publication by gene
