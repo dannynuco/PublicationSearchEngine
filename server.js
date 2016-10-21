@@ -56,6 +56,7 @@ var server = http.createServer(function(request, response){
     console.log(request.method);
     switch(request.method) {
         case 'GET':
+            response.setHeader('Content-Type', 'application/json; charset="utf-8"');
             response.end("PSEngine search backend. Accepting POST requests");
             break;
         case 'POST':
