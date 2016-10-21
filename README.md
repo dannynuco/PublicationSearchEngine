@@ -1,7 +1,10 @@
 # PublicationSearchEngine
 * A single-page, full-stack doc search engine.
 
-## Setting up
+## Live Demo
+* [Live website on Heroku](http://psengine.herokuapp.com/)
+
+## Local set-up ~~for nerds~~
 * Clone the repo.
 * Open repo directory.
 * Run `npm-install` to set up dependencies.
