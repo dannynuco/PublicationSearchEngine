@@ -76,7 +76,7 @@
             return;
         }
         $.ajax({
-              url: "http://localhost:8000/",
+              url: "http://psengine-api.herokuapp.com/",
               type: 'POST',
               data: {body:this.state.searchQuery},
               success: function(result){
