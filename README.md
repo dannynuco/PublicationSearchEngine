@@ -7,7 +7,7 @@
 ## Local set-up ~~for nerds~~
 * Clone the repo.
 * Open repo directory.
-* Run `npm-install` to set up dependencies.
+* Run `npm install` to set up dependencies.
 * Run `node server.js` to start backend server. Default port number is `8000`.
 * Run `node bin/http-server` to start webpage server. Default port number is `8080`.
 * To reap your rewards and run demo, open your browser at [127.0.0.1:8080](http://127.0.0.1:8080).
