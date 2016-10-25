@@ -1,5 +1,5 @@
 /**
- * Created by Danny on 10/18/2016.
+ * Created by Danny on 10/24/2016.
  */
 var PORT_NUM = process.env.PORT||8000;
 var MAX_QUERY_SIZE=10000;
@@ -38,16 +38,12 @@ var server = http.createServer(function(request, response){
                 //Begins search in backend database
                 item= qs.parse(item);
                 var queryString = item['body'];
-                if(typeof(queryString)!='string'){
+                if(typeof(queryString)!='string' || queryString==""){
                     //improper query string
                     response.end('{}');
                     return;
                 }
-                if(queryString==""){
-                    //query string empty
-                    response.end('{}');
-                    return;
-                }
+                
                 var queryString = queryString.toLowerCase().split(' ');
                 console.log(queryString);
                 var searchBody={
@@ -74,7 +70,7 @@ var server = http.createServer(function(request, response){
                                 }
                             }
                         });
-                    } else {
+                    } else if(queryString[i]!='-'){
                         //minus results matching these queries
                         searchBody.body.query.bool.must_not.push({
                             wildcard: {
@@ -90,7 +86,7 @@ var server = http.createServer(function(request, response){
                     //Done generating resultSet, collect data and respond
                     var hits=resp.hits.hits;
                     var result={};
-                    for(i=0; i<hits.length; i++){
+                    for(i in <hits){
                         result[i]={
                             'id':hits[i]._id,
                             'title':hits[i]._source.title,
