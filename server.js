@@ -1,52 +1,17 @@
 /**
  * Created by Danny on 10/18/2016.
  */
-
 var PORT_NUM = process.env.PORT||8000;
+var MAX_QUERY_SIZE=10000;
 var http = require('http');
 var url = require('url');
 var qs = require('querystring');
 var fs = require('fs');
-var parse = require('csv-parse')
+var elasticsearch = require('elasticsearch');
 
-
-//Read in csv data rows
-//var searchData={};
-
-var id=[];
-var title=[];
-var author=[];
-var publisher=[];
-var pub_date=[];
-var figure_number=[];
-var technique_group=[];
-var gene=[];
-
-console.log("Parsing csv data...");
-var isFirstRow=true;
-var index=0;
-fs.createReadStream('test_data.csv')
-    .pipe(parse({delimiter: ','}))
-    .on('data', function(csvData) {
-        if(!isFirstRow){
-            id.push(index)
-            title.push(csvData[0])
-            author.push(csvData[1])
-            publisher.push(csvData[2])
-            pub_date.push(csvData[3])
-            figure_number.push(csvData[4])
-            technique_group.push(csvData[5])
-            gene.push(csvData[6])
-        } else {
-            isFirstRow=false;
-        }
-        index++;
-    })
-    .on('end',function() {
-        //do something wiht csvData
-        console.log("Finished parsing csv data.")
-    });
-
+var client = new elasticsearch.Client({
+    host: 'https://myvuyw351f:6pzmfgszuk@sandbox-cluster-7288143143.us-east-1.bonsai.io'
+});
 
 var server = http.createServer(function(request, response){
     //Set header for content type and CORS
@@ -83,32 +48,67 @@ var server = http.createServer(function(request, response){
                     response.end('{}');
                     return;
                 }
-                var queryString = queryString.toUpperCase();
+                var queryString = queryString.toLowerCase().split(' ');
                 console.log(queryString);
-                for(i=0; i<gene.length; i++){
-                    if(gene[i].indexOf(queryString) > -1) {
-                        resultSet.push(i);
+                var searchBody={
+                    index: '0',
+                    type: 'figures',
+                    size: MAX_QUERY_SIZE,
+                    body: {
+                        query: {
+                            bool:{
+                                should:[],
+                                must_not:[]
+                            }
+                        }
+
                     }
                 }
-                //Done generating resultSet, collect data and respond
-                //console.log(resultSet);
-                var result={};
-                for(i=0; i<resultSet.length; i++){
-                    result[i]={
-                        'id':id[resultSet[i]],
-                        'title':title[resultSet[i]],
-                        'author':author[resultSet[i]],
-                        'publisher':publisher[resultSet[i]],
-                        'pub_date':pub_date[resultSet[i]],
-                        'figure_number':figure_number[resultSet[i]],
-                        'technique_group':technique_group[resultSet[i]],
-                        'gene':gene[resultSet[i]]
+
+                for(i in queryString){
+                    if(!queryString[i].startsWith('-')){
+                        searchBody.body.query.bool.should.push({
+                            wildcard:{
+                                gene:{
+                                    value: '*'+queryString[i]+"*"
+                                }
+                            }
+                        });
+                    } else {
+                        //minus results matching these queries
+                        searchBody.body.query.bool.must_not.push({
+                            wildcard: {
+                                gene: {
+                                    value: '*' + queryString[i].substr(1) + "*"
+                                }
+                            }
+                        });
                     }
                 }
-                //console.log(result);
-                var resultstr=JSON.stringify(result);
-                response.setHeader('Content-Length', Buffer.byteLength(resultstr));
-                response.end(resultstr);
+                console.log(searchBody)
+                client.search(searchBody).then(function (resp) {
+                    //Done generating resultSet, collect data and respond
+                    var hits=resp.hits.hits;
+                    var result={};
+                    for(i=0; i<hits.length; i++){
+                        result[i]={
+                            'id':hits[i]._id,
+                            'title':hits[i]._source.title,
+                            'author':hits[i]._source.author,
+                            'publisher':hits[i]._source.publisher,
+                            'pub_date':hits[i]._source.pub_date,
+                            'figure_number':hits[i]._source.figure_number,
+                            'technique_group':hits[i]._source.technique_group,
+                            'gene':hits[i]._source.gene
+                        }
+                    }
+                    var resultstr=JSON.stringify(result);
+                    response.setHeader('Content-Length', Buffer.byteLength(resultstr));
+                    response.end(resultstr);
+                }, function (err) {
+                    console.trace(err.message);
+                    response.end('{}');
+                });
             });
             break;
         case 'DELETE':
