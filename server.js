@@ -86,7 +86,7 @@ var server = http.createServer(function(request, response){
                     //Done generating resultSet, collect data and respond
                     var hits=resp.hits.hits;
                     var result={};
-                    for(i in <hits){
+                    for(i in hits){
                         result[i]={
                             'id':hits[i]._id,
                             'title':hits[i]._source.title,
