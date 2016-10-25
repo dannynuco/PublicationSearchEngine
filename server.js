@@ -62,7 +62,7 @@ var server = http.createServer(function(request, response){
                 }
 
                 for(i in queryString){
-                    if(!queryString[i].startsWith('-')){
+                    if(!queryString[i].startsWith('-') || queryString[i]=='-'){
                         searchBody.body.query.bool.should.push({
                             wildcard:{
                                 gene:{
@@ -70,7 +70,7 @@ var server = http.createServer(function(request, response){
                                 }
                             }
                         });
-                    } else if(queryString[i]!='-'){
+                    } else {
                         //minus results matching these queries
                         searchBody.body.query.bool.must_not.push({
                             wildcard: {
