@@ -8,7 +8,7 @@
     "start": "node server.js"
   },
   "dependencies": {
-      "csv-parse": "1.1.7",
+      "elasticsearch": "11.0.0",
       "http-server": "0.9.0"
   },
   "repository": {
