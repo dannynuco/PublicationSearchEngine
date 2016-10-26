@@ -44,17 +44,21 @@ class PSEngine extends React.Component {
             display:"none"
         };
 
-        var searchContent;
+        var showStyle = {
+            display:"inline"
+        };
+
         //When searching, display a busy loading gif
-        if(this.state.searching){
-            searchContent =
-                <div>
+        return (
+            <div>
+                <SearchBox onSearchBoxChange={this.onSearchBoxChange.bind(this)}/>
+                <br/><br/>
+                <div className="buttonRow"><button id="searchButton" className="button1" onClick={this.ondoSearch.bind(this)}>Search by gene</button><div className="divider"/><button id="favListButton" className="button1" onClick={this.onShowFavourites.bind(this)}>My favourites</button></div>
+                <div id="busywait" style={this.state.searching?showStyle:hideStyle}>
                     <br/><br/><br/>
                     <img src="loading.gif" width="150" height="150"/>
                 </div>
-        } else {
-            searchContent =
-                <div>
+                <div id="document-results" style={this.state.searching?hideStyle:showStyle}>
                     <div id="technique-barchart" style={hideStyle}>
                         <svg width={Math.max(this.state.numTechniques*200, 1000)} height="200"></svg>
                         <br/>
@@ -62,16 +66,9 @@ class PSEngine extends React.Component {
                     </div>
                     <br/><br/><br/>
                     <SearchContainer doSearch={this.ondoSearch.bind(this)}>
-                        {children}
+                            {children}
                     </SearchContainer>
                 </div>
-        }
-        return (
-            <div>
-                <SearchBox onSearchBoxChange={this.onSearchBoxChange.bind(this)}/>
-                <br/><br/>
-                <div className="buttonRow"><button id="searchButton" className="button1" onClick={this.ondoSearch.bind(this)}>Search by gene</button><div className="divider"/><button id="favListButton" className="button1" onClick={this.onShowFavourites.bind(this)}>My favourites</button></div>
-                {searchContent}
             </div>
             );
     }
