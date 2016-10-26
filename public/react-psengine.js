@@ -5,6 +5,7 @@
             searchResult:[],
             compiledResult:{},
             numChildren:0,
+            numTechniques:0
             searchQuery:"",
             favourites:{}
         };
@@ -59,7 +60,7 @@
             <br/><br/>
             <div className="buttonRow"><button id="searchButton" className="button1" onClick={this.ondoSearch.bind(this)}>Search by gene</button><div className="divider"/><button id="favListButton" className="button1" onClick={this.onShowFavourites.bind(this)}>My favourites</button></div>
             <div id="technique-barchart" style={hideStyle}>
-                <svg width="960" height="200"></svg>
+                <svg width={this.state.numTechniques*200} height="200"></svg>
                 <br/>
                 <div id="technique-barchart-title">Technique Distribution in Search Result</div>
             </div>
@@ -84,6 +85,7 @@
                   var chartStats={};
                   this.setState({
                       numChildren:0,
+                      numTechniques:0,
                       searchResult:[]
                   });
                   for(var i in result){
@@ -91,6 +93,7 @@
                       this.state.numChildren++
                       //Calculate statistics needed to draw chart
                       if(!chartStats[result[i]['technique_group']]){
+                          this.state.numTechniques++
                           chartStats[result[i]['technique_group']]=1;
                       } else {
                           chartStats[result[i]['technique_group']]++;
@@ -120,7 +123,8 @@
 
                   this.setState({
                       numChildren:this.state.numChildren,
-                      searchResult: this.state.searchResult,
+                      numTechniques:this.state.numTechniques,
+                      searchResult:this.state.searchResult,
                       compiledResult:compiledResult
                   });
                   //Draw chart with D3
@@ -196,14 +200,13 @@ class ResultEntry extends React.Component {
         //Truncate title to 200 characters to fit in search box
         if(!this.state.showDetail){
             return (
-                <div className="ResultEntry"
-                onClick={this.onClick.bind(this)} >
+                <div className="ResultEntry">
                     <button className={this.props.liked?"likedEntry":"likeEntry"}
                     onClick={this.onLike.bind(this)}>❤
                     </button>
                 {this.props.data.gene}<br/>
                 {this.props.data.title}<br/>
-                    <img src="flask.png"/>
+                    <img onClick={this.onClick.bind(this)} src="flask.png"/>
                 </div>
                 )
         }
@@ -211,7 +214,7 @@ class ResultEntry extends React.Component {
           for(var i=0; i<this.props.data.figure_number.length; i++){
               figures_array.push(
               <div className="figure-detail">
-              <img src="flask.png"/>
+              <img src="flask.png" onClick={this.onClick.bind(this)} />
                   <div>{this.props.data.figure_number[i]} - {this.props.data.technique_group[i]}</div>
               </div>
               )
@@ -226,8 +229,7 @@ class ResultEntry extends React.Component {
           });
           //console.log(figures_array);
         return (
-            <div className="ResultEntryDetailed"
-            onClick={this.onClick.bind(this)} >
+            <div className="ResultEntryDetailed">
                 <button className={this.props.liked?"likedEntry":"likeEntry"}
                 onClick={this.onLike.bind(this)}>❤
                 </button>
