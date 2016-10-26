@@ -84,7 +84,7 @@ class PSEngine extends React.Component {
             searching:true
         });
         $.ajax({
-            url: "http://psengine-api.herokuapp.com/",
+            url: "https://psengine-api.herokuapp.com/",
             type: 'POST',
             data: {body:this.state.searchQuery},
             success: function(result){
