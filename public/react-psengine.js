@@ -5,7 +5,7 @@
             searchResult:[],
             compiledResult:{},
             numChildren:0,
-            numTechniques:0
+            numTechniques:0,
             searchQuery:"",
             favourites:{}
         };
