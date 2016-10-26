@@ -8,7 +8,6 @@
     "start": "node bin/http-server"
   },
   "dependencies": {
-      "csv-parse": "1.1.7",
       "http-server": "0.9.0"
   },
   "repository": {
